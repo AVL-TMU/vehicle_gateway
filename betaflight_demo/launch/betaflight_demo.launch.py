@@ -28,16 +28,16 @@ def get_betaflight_dir():
     return get_package_share_directory('betaflight_sim')
 
 
-run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0", "tcp:127.0.0.1:5761"]),
+run_virtual_tty = ExecuteProcess(cmd=["socat", "-dd", "pty,link=/tmp/ttyS0,raw,echo=0", "tcp:127.0.0.1:5760"]),
 
 
 def _run_virtual_tty_check(event):
     """
-    Consider betaflight_controller ready when 'bind port 5761 for UART1...' string is printed.
+    Consider betaflight_controller ready when 'bind port 5760 for UART1...' string is printed.
 
     Launches betaflight_controller node if ready.
     """
-    target_str = 'bind port 5761 for UART1'
+    target_str = 'bind port 5760 for UART1'
     if target_str in event.text.decode():
         time.sleep(2)
         return run_virtual_tty
@@ -62,18 +62,62 @@ def generate_launch_description():
                                            default_value=world_name,
                                            description='World name')
 
+
+
+
+
+    '''gz_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            # Ground-truth TF (you already had this)
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            # NEW: odometry bridges
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/odometry_with_covariance@nav_msgs/msg/Odometry[gz.msgs.OdometryWithCovariance',
+        ],
+        remappings=[
+            ('/model/iris_with_Betaflight/model/iris_with_standoffs/pose', '/tf'),
+        ],
+        output='screen'
+    )'''
+
+
+
+
     gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/model/iris_with_Betaflight/model/iris_with_standoffs/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
-                   '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
-        remappings=[("/model/iris_with_Betaflight/model/iris_with_standoffs/pose", "/tf")],
+        arguments=[
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/model/iris_with_Betaflight/model/iris_with_standoffs/odometry_with_covariance@nav_msgs/msg/Odometry[gz.msgs.OdometryWithCovariance',
+
+
+            '/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/imu_link/sensor/imu_sensor/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
+        ],
+        remappings=[
+            ('/model/iris_with_Betaflight/model/iris_with_standoffs/pose', '/tf'),
+            ('/world/empty_betaflight_world/model/iris_with_Betaflight/model/iris_with_standoffs/link/imu_link/sensor/imu_sensor/imu',
+             '/model/iris_with_Betaflight/model/iris_with_standoffs/imu'),
+        ],
         output='screen'
     )
+
+
+
+
 
     run_betaflight_sitl = ExecuteProcess(cmd=['betaflight_SITL.elf', "127.0.0.1"],
                                          cwd=os.path.join(get_betaflight_dir(), "config"),
                                          output='screen')
+                                         
+                                         
+                                         
+                                         
+                                         
     return LaunchDescription([
         # Launch gazebo environment
         world_name_arg,

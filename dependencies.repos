@@ -3,18 +3,6 @@ repositories:
     type: git
     url: https://github.com/gazebosim/ros_gz
     version: 7c62a1ce3cfb4eb3b54e1cfd092c9b63a9d5f255
-  uros/micro_ros_msgs:
-    type: git
-    url: https://github.com/micro-ROS/micro_ros_msgs.git
-    version: humble
-  uros/micro-ROS-Agent:
-    type: git
-    url: https://github.com/micro-ROS/micro-ROS-Agent.git
-    version: humble
-  px4_msgs:
-    type: git
-    url: https://github.com/PX4/px4_msgs
-    version: "release/1.14"
   msp:
     type: git
     url: https://github.com/christianrauch/msp
@@ -22,4 +10,4 @@ repositories:
   zenohc:
     type: git
     url: https://github.com/eclipse-zenoh/zenoh-c
-    version: main
+    version: main  # Use a stable release tag instead of main
