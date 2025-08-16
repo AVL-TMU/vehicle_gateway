@@ -132,11 +132,16 @@
   <always_on>1</always_on>
   <update_rate>400</update_rate>
   <!-- Add this line so the bridge can match names 1:1 -->
-  <topic>/model/iris_with_Betaflight/model/iris_with_standoffs/imu</topic>
+  <!-- <topic>/model/iris_with_Betaflight/model/iris_with_standoffs/imu</topic> -->
 
   <imu>
     <!-- optional: add noise blocks here if you want realism -->
   </imu>
+  <plugin
+      filename="gz-sim-ros2-imu-system"
+      name="gz::sim::systems::Imu">
+  <topic>/model/iris_with_Betaflight/model/iris_with_standoffs/imu</topic>
+    </plugin>
 </sensor>
       <sensor name="air_pressure_sensor" type="air_pressure">
         <always_on>1</always_on>
